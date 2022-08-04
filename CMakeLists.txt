@@ -76,7 +76,7 @@ endif()
 # use it that way cmake .. -DBUILD_APPS=ON -DBUILD_SAMPLES=ON
 # --------------------------------------------------------
 option(HAS_HDF5                                "Platform supports HDF5 library"                                    ON)
-option(HAS_QT5                                 "Platform supports Qt 5 library"                                    ON)
+option(HAS_QT5                                 "Platform supports Qt 5 library"                                   OFF)
 option(HAS_CURL                                "Build with CURL (i.e. upload support in the recorder app)"         ON)
 option(HAS_CAPNPROTO                           "Platform supports Cap'n Proto library"                            OFF)
 
@@ -210,6 +210,7 @@ endforeach()
 
 macro(find_package)
   if(NOT "${ARGV0}" IN_LIST as_subproject)
+    message(" ${ARGV} ")
     _find_package(${ARGV})
   endif()
 endmacro()
