@@ -89,7 +89,7 @@ option(BUILD_STANDALONE_PY_WHEEL               "Build eCAL python binding as sta
 option(BUILD_CSHARP_BINDING                    "Build eCAL C# binding"                                            OFF)
 option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                      OFF)
 
-option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
+option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"            ON)
 
 option(ECAL_INCLUDE_PY_SAMPLES                 "Include python language sample projects into CMake"               OFF)
 option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                               ON)

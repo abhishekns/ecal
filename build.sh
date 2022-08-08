@@ -10,3 +10,4 @@ mkdir -p build
 cd build
 cmake .. -DHAS_QT5=OFF
 make -j 8 install
+ldconfig
