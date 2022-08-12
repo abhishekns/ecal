@@ -6,9 +6,6 @@ NETWORK = --ipc=host --pid=host --network=host
 
 DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
 
-#define NW_DEVICE if you want to run server or client
-NW_DEVICE=enp6s0
-
 all: images
 
 
@@ -30,16 +27,12 @@ latency-single:
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
 
-route:
-	NW_DEVICE=${NW_DEVICE} ./setupRoute.sh
 
-server client:
+# run client first and then the server on same or another machine
+server client: 
 	mkdir -p logs
-	docker run --name ecal-$@-common -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-build:${VER} /bin/bash
-	#/ecal/run-$@.sh
-
-test:  route server client
-
+	./setupRoute.sh
+	docker run --name ecal-$@-common -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-build:${VER} /ecal/run-$@.sh
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
