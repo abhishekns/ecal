@@ -2,6 +2,7 @@
 
 function buildAll() {
     cd ~/ecal
+    git pull
     make images
     make -B build
 }
