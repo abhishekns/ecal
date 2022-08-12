@@ -35,7 +35,7 @@ push: images build
 server client:
 	mkdir -p logs
 	./setupRoute.sh
-	docker run --name ecal-$@-common -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/run-$@.sh
+	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/run-$@.sh
 
 SERVER=ethlab-8881
 CLIENT=simfarm15
@@ -44,15 +44,28 @@ server_password=labview===
 client_user=abnsharm
 client_password=labview===
 
-test-deploy: push
-	ssh ${client_user}@${CLIENT} 'curl https://raw.githubusercontent.com/abhishekns/ecal/master/deploy.sh client | bash ' &
-	ssh ${server_user}@${SERVER} 'curl https://raw.githubusercontent.com/abhishekns/ecal/master/deploy.sh server | bash '
+passwdless:
+	echo "${client_password}" > /tmp/.client.pwd
+	echo "${server_password}" > /tmp/.server.pwd
+	ssh-copy-id ${client_user}@${CLIENT}
+	ssh-copy-id ${server_user}@${SERVER} < /tmp/.server.pwd
 
-test: test-deploy
+test-deploy:
+	mkdir -p logs
+	scp deploy.sh ${client_user}@${CLIENT}:~/
+	scp deploy.sh ${server_user}@${SERVER}:~/
+	ssh -n ${client_user}@${CLIENT} '~/deploy.sh client' | tee logs/remoteClientSetup.log &
+	ssh -n ${server_user}@${SERVER} '~/deploy.sh server' | tee logs/remoteServerSetup.log
+
+remote-clean:
+	ssh ${client_user}@${CLIENT} rm -rf ecal
+	ssh ${server_user}@${SERVER} rm -rf ecal
+
+test:
 	mkdir -p logs
 	rm -f logs/client.log logs/server.log
-	ssh ${client_user}@${CLIENT} 'cd ~/ecal && make client ' > logs/client.log
-	ssh ${server_user}@${SERVER} 'cd ~/ecal && make server' > logs/server.log
+	ssh ${client_user}@${CLIENT} -p ${client_password} 'cd ~/ecal && make client ' > logs/client.log
+	ssh ${server_user}@${SERVER} -p ${server_password} 'cd ~/ecal && make server' > logs/server.log
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
