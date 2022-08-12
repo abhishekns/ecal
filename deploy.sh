@@ -13,4 +13,4 @@ if [ -d ~/ecal ]; then
     git submodule update --init
 fi
 
-buildAll()
+buildAll
