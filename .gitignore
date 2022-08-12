@@ -48,3 +48,4 @@ cmake-build-*
 # clang-tidy
 log_*.txt
 build/
+*.log

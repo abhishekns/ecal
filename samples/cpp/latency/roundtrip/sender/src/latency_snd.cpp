@@ -49,7 +49,7 @@ void do_run(const int runs, int snd_size /*kB*/, int delay /*ms*/, int mem_buffe
   eCAL::Initialize(0, nullptr, "latency_snd");
 
   // create publisher and subscriber
-  eCAL::CPublisher pub("ping");
+  eCAL::CPublisher pub("roundtrip-to");
 
   // set number of publisher memory buffers
   pub.ShmSetBufferCount(mem_buffer);
