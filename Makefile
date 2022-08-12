@@ -16,7 +16,7 @@ ecal-base:
 
 build:
 	docker run --name ecal-$@ -i -v `pwd`:/ecal ecal-base:${VER} /ecal/build.sh
-	docker commit ecal-$@ ecal-$@:${VER}
+	docker commit ecal-$@ ecal-src-$@:${VER}
 	docker rm ecal-$@
 
 bash:
@@ -27,7 +27,8 @@ latency-single:
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
 
-push: images build 
+push: images
+	docker tag ecal-base:${VER} ${REGISTRY}/dtots/ecal-base:${VER}
 	docker tag ecal-src-build:${VER} ${REGISTRY}/dtots/ecal-src-build:${VER}
 	docker push ${REGISTRY}/dtots/ecal-src-build:${VER}
 
@@ -37,8 +38,8 @@ server client:
 	./setupRoute.sh
 	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/run-$@.sh
 
-SERVER=ethlab-8881
-CLIENT=simfarm15
+server=ethlab-8881
+client=simfarm15
 server_user=root
 server_password=labview===
 client_user=abnsharm
@@ -47,25 +48,25 @@ client_password=labview===
 passwdless:
 	echo "${client_password}" > /tmp/.client.pwd
 	echo "${server_password}" > /tmp/.server.pwd
-	ssh-copy-id ${client_user}@${CLIENT}
-	ssh-copy-id ${server_user}@${SERVER} < /tmp/.server.pwd
+	ssh-copy-id ${client_user}@${client}
+	ssh-copy-id ${server_user}@${server} < /tmp/.server.pwd
 
-test-deploy:
+test-deploy: images build push
 	mkdir -p logs
-	scp deploy.sh ${client_user}@${CLIENT}:~/
-	scp deploy.sh ${server_user}@${SERVER}:~/
-	ssh -n ${client_user}@${CLIENT} '~/deploy.sh client' | tee logs/remoteClientSetup.log &
-	ssh -n ${server_user}@${SERVER} '~/deploy.sh server' | tee logs/remoteServerSetup.log
+	scp deploy.sh ${client_user}@${client}:~/
+	scp deploy.sh ${server_user}@${server}:~/
+	ssh -n ${client_user}@${client} '~/deploy.sh client' | tee logs/remoteClientSetup.log &
+	ssh -n ${server_user}@${server} '~/deploy.sh server' | tee logs/remoteServerSetup.log
 
 remote-clean:
-	ssh ${client_user}@${CLIENT} rm -rf ecal
-	ssh ${server_user}@${SERVER} rm -rf ecal
+	ssh ${client_user}@${client} rm -rf ecal
+	ssh ${server_user}@${server} rm -rf ecal
 
 test:
 	mkdir -p logs
 	rm -f logs/client.log logs/server.log
-	ssh ${client_user}@${CLIENT} -p ${client_password} 'cd ~/ecal && make client ' > logs/client.log
-	ssh ${server_user}@${SERVER} -p ${server_password} 'cd ~/ecal && make server' > logs/server.log
+	ssh ${client_user}@${client} -p ${client_password} 'cd ~/ecal && make client ' > logs/client.log
+	ssh ${server_user}@${server} -p ${server_password} 'cd ~/ecal && make server' > logs/server.log
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
