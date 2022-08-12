@@ -90,7 +90,7 @@ option(BUILD_TIME                              "Build the eCAL time interfaces" 
 option(BUILD_PY_BINDING                        "Build eCAL python binding"                                         ON)
 option(BUILD_STANDALONE_PY_WHEEL               "Build eCAL python binding as standalone wheel"                     ON)
 option(BUILD_CSHARP_BINDING                    "Build eCAL C# binding"                                            OFF)
-option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                       ON)
+option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                      OFF)
 
 option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
 
@@ -115,7 +115,7 @@ option(ECAL_THIRDPARTY_BUILD_GTEST             "Build gtest with eCAL"          
 if(WIN32)
   option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                          ON)
   option(ECAL_THIRDPARTY_BUILD_CURL            "Build CURL with eCAL"                                              ON)
-  option(ECAL_THIRDPARTY_BUILD_HDF5            "Build HDF5 with eCAL"                                              ON)
+  option(ECAL_THIRDPARTY_BUILD_HDF5            "Build HDF5 with eCAL"                                             OFF)
   cmake_dependent_option(ECAL_THIRDPARTY_BUILD_QWT "Build qwt::qwt with eCAL"                                      ON  "HAS_QT5" OFF)
 else()
   option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                          OFF)

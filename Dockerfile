@@ -35,6 +35,11 @@ RUN apt install -y libprotoc-dev
 RUN apt install -y libacl1-dev libncurses5-dev pkg-config libcurl4-openssl-dev 
 
 RUN apt install -y vim gdb mlocate 
+
+RUN apt install -y python3-pip 
+
+RUN apt install -y patchelf
+
 RUN updatedb
 
 CMD /bin/bash
