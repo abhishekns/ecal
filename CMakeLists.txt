@@ -21,6 +21,9 @@ cmake_minimum_required(VERSION 3.13)
 include(CMakeDependentOption)
 include("${CMAKE_CURRENT_LIST_DIR}/thirdparty/cmake_functions/qt/qt_msvc_path.cmake")
 
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+include(${CMAKE_CURRENT_SOURCE_DIR}/SetupConfigurations.cmake)
+
 if (POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW) # Prevent HDF5 from overwriting our output paths
 endif (POLICY CMP0077)
@@ -31,7 +34,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 project(eCAL)
 set(ECAL_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
-
+set(CMAKE_BUILD_TYPE "Debug")
 # --------------------------------------------------------
 # set msvc specific options
 # --------------------------------------------------------
@@ -84,14 +87,14 @@ option(BUILD_DOCS                              "Build the eCAL documentation"   
 option(BUILD_APPS                              "Build the eCAL applications"                                       ON)
 option(BUILD_SAMPLES                           "Build the eCAL samples"                                            ON)
 option(BUILD_TIME                              "Build the eCAL time interfaces"                                    ON)
-option(BUILD_PY_BINDING                        "Build eCAL python binding"                                        OFF)
-option(BUILD_STANDALONE_PY_WHEEL               "Build eCAL python binding as standalone wheel"                    OFF)
+option(BUILD_PY_BINDING                        "Build eCAL python binding"                                         ON)
+option(BUILD_STANDALONE_PY_WHEEL               "Build eCAL python binding as standalone wheel"                     ON)
 option(BUILD_CSHARP_BINDING                    "Build eCAL C# binding"                                            OFF)
-option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                      OFF)
+option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                       ON)
 
-option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"            ON)
+option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
 
-option(ECAL_INCLUDE_PY_SAMPLES                 "Include python language sample projects into CMake"               OFF)
+option(ECAL_INCLUDE_PY_SAMPLES                 "Include python language sample projects into CMake"                ON)
 option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                               ON)
 
 option(ECAL_JOIN_MULTICAST_TWICE               "Specific Multicast Network Bug Workaround"                        OFF)
