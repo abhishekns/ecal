@@ -8,6 +8,5 @@ awk -F"=" '/^network_enabled/{$2="= true"}1' ${PREFIX}/etc/ecal/ecal.ini > ${PRE
         mv ${PREFIX}/etc/ecal/ecal.tmp ${PREFIX}/etc/ecal/ecal.ini
 rm -f /logs/subscriber.log
 
-${PREFIX}/bin/ecal_sample_latency_rec 
-| tee /logs/subscriber.log  
+${PREFIX}/bin/ecal_sample_latency_rec | tee /logs/subscriber.log  
 #sleep 60

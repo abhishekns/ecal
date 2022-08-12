@@ -30,6 +30,7 @@ latency-single:
 push: images
 	docker tag ecal-base:${VER} ${REGISTRY}/dtots/ecal-base:${VER}
 	docker tag ecal-src-build:${VER} ${REGISTRY}/dtots/ecal-src-build:${VER}
+	docker push ${REGISTRY}/dtots/ecal-base:${VER}
 	docker push ${REGISTRY}/dtots/ecal-src-build:${VER}
 
 # run client first and then the server on same or another machine
@@ -62,11 +63,26 @@ remote-clean:
 	ssh ${client_user}@${client} rm -rf ecal
 	ssh ${server_user}@${server} rm -rf ecal
 
-test:
+test-run:
 	mkdir -p logs
 	rm -f logs/client.log logs/server.log
-	ssh ${client_user}@${client} -p ${client_password} 'cd ~/ecal && make client ' > logs/client.log
-	ssh ${server_user}@${server} -p ${server_password} 'cd ~/ecal && make server' > logs/server.log
+	ssh ${client_user}@${client} 'cd ~/ecal && make client '
+	sleep 5
+	ssh ${server_user}@${server} 'cd ~/ecal && make server'
+
+server-stop client-stop:
+	$(eval NAME := $(subst -stop,,$@))
+	ssh ${${NAME}_user}@${${NAME}} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
+
+test-stop: client-stop server-stop
+
+server-logs:
+	$(eval NAME := $(subst -logs,,$@))
+	ssh ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/publisher.log'
+
+client-logs:
+	$(eval NAME := $(subst -logs,,$@))
+	ssh ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/subscriber.log'
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
