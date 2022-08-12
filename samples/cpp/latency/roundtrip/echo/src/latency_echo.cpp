@@ -42,9 +42,6 @@ struct SCallbackPar
   size_t                 msg_num  = 0;
 };
 
-// warmup runs not to measure
-const int warmups(10);
-
 std::map<int, eCAL::CPublisher*> publishers;
 
 eCAL::CPublisher* getPublisher(int snd_size /*kB*/, int mem_buffer, bool zero_copy) { 
@@ -152,10 +149,6 @@ int main(int argc, char** argv)
   {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
     return EXIT_FAILURE;
-  }
-
-  for(auto kvp in publishers) {
-    kvp->second->finalize
   }
 
   return(0);

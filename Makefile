@@ -17,7 +17,10 @@ ecal-base:
 build:
 	docker run --name ecal-$@ -i -v `pwd`:/ecal ecal-base:${VER} /ecal/build.sh
 	docker commit ecal-$@ ecal-src-$@:${VER}
-	docker rm ecal-$@
+	docker rm ecal-src-$@
+
+clean:
+	rm -rf build
 
 bash:
 	docker run --name ecal-$@ --rm -it -v `pwd`:/ecal ecal-src-build:${VER} /bin/bash

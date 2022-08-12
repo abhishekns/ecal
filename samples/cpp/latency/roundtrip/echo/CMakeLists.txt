@@ -26,7 +26,7 @@ find_package(eCAL REQUIRED)
 find_package(tclap REQUIRED)
 
 set(latency_rec_src
-    src/latency_rec.cpp
+    src/latency_echo.cpp
     src/latency_log.cpp
     src/latency_log.h
 )
