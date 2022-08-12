@@ -8,6 +8,8 @@ function buildAll() {
 }
 
 if [ -d ~/ecal ]; then
+    echo "not cloing again..."
+else
     git clone https://github.com/abhishekns/ecal.git
     cd ~/ecal
     git submodule update --init
