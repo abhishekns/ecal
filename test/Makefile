@@ -53,7 +53,7 @@ passwdless:
 test-run: echo-test receiver-test sender-test
 
 receiver-run sender-run echo-run:
-	$(eval NAME := $(subst -run,$@))
+	$(eval NAME := $(subst -run,,$@))
 	mkdir -p logs
 	rm -f logs/${NAME}.log
 	ssh ${${NAME}_user}@${${NAME}} 'cd ~/ecal/test && make ${NAME} '
