@@ -21,7 +21,7 @@ sender=simfarm14
 sender_user=abnsharm
 sender_password=labview===
 
-receiver=
+receiver=simfarm14
 receiver_user=abnsharm
 receiver_password=labview===
 
@@ -55,7 +55,7 @@ test-run: echo-test receiver-test sender-test
 receiver-run sender-run echo-run:
 	$(eval NAME := $(subst -run,$@))
 	mkdir -p logs
-	rm -f logs/${NAMe}.log
+	rm -f logs/${NAME}.log
 	ssh ${${NAME}_user}@${${NAME}} 'cd ~/ecal/test && make ${NAME} '
 	sleep 3
 
