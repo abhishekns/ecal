@@ -6,6 +6,10 @@ NETWORK = --ipc=host --pid=host --network=host
 
 DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
 
+# Name of text file containing build number.
+IMAGE_BUILD_NUMBER = image-build-number.txt
+MIN_VER = $$(cat $(IMAGE_BUILD_NUMBER))
+
 all: images
 
 
@@ -30,11 +34,13 @@ latency-single:
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
 
-push: images
-	docker tag ecal-base:${VER} ${REGISTRY}/dtots/ecal-base:${VER}
-	docker tag ecal-src-build:${VER} ${REGISTRY}/dtots/ecal-src-build:${VER}
-	docker push ${REGISTRY}/dtots/ecal-base:${VER}
-	docker push ${REGISTRY}/dtots/ecal-src-build:${VER}
+push: ${BUILD_NUMBER_FILE}
+	docker tag ecal-base:${VER} ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
+	docker tag ecal-src-build:${VER} ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
+	docker push ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
+	docker push ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
+# Include build number rules.
+include buildnumber.mak
 
 # run client first and then the server on same or another machine
 server client:

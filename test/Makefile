@@ -16,12 +16,6 @@ latency-single:
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
 
-# run client first and then the server on same or another machine
-receiver sender:
-	mkdir -p logs
-	./setupRoute.sh
-	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
-
 sender=ethlab-8881
 sender_user=abnsharm
 sender_password=labview===
@@ -33,6 +27,12 @@ receiver_password=labview===
 echo=simfarm15
 echo_user=root
 echo_password=labview===
+
+# run echo first and then the receiver followed by sender on same or another machine
+receiver sender echo:
+	mkdir -p logs
+	./setupRoute.sh
+	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
 
 passwdless:
 	echo "${sender_password}" > /tmp/.sender.pwd
