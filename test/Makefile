@@ -29,6 +29,15 @@ echo=simfarm15
 echo_user=abnsharm
 echo_password=labview===
 
+test-deploy: deploy-sender deploy-receiver deploy-echo
+
+deploy-sender deploy-receiver deploy-echo:
+	mkdir -p logs
+	$(eval NAME := $(subst deploy-,,$@))
+	scp ../deploy.sh ../image-build-number.txt ${${NAME}_user}@${${NAME}}:~/
+	ssh -n ${${NAME}_user}@${${NAME}} '~/deploy.sh ${NAME}' | tee logs/remote${NAME}.log &
+
+
 # run echo first and then the receiver followed by sender on same or another machine
 receiver sender echo:
 	mkdir -p logs

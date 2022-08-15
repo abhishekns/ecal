@@ -61,12 +61,13 @@ passwdless:
 	ssh-copy-id ${client_user}@${client}
 	ssh-copy-id ${server_user}@${server} < /tmp/.server.pwd
 
-test-deploy: images
+deploy-test: deploy-client deploy-server
+
+deploy-client deploy-server:
 	mkdir -p logs
-	scp deploy.sh ${client_user}@${client}:~/
-	scp deploy.sh ${server_user}@${server}:~/
-	ssh -n ${client_user}@${client} '~/deploy.sh client' | tee logs/remoteClientSetup.log &
-	ssh -n ${server_user}@${server} '~/deploy.sh server' | tee logs/remoteServerSetup.log
+	$(eval NAME := $(subst deploy-,$@))
+	scp ../deploy.sh ../image-build-number.txt ${${NAME}_user}@${${NAME}}:~/
+	ssh -n ${${NAME}_user}@${${NAME}} '~/deploy.sh ${NAME}' | tee logs/remote${NAME}.log &
 
 remote-clean:
 	ssh ${client_user}@${client} rm -rf ecal
