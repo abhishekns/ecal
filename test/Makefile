@@ -68,7 +68,7 @@ sender-stop receiver-stop echo-stop:
 
 sender-bash receiver-bash echo-bash:
 	$(eval NAME := $(subst -bash,,$@))
-	${SSH} ${${NAME}_user}@${${NAME}}  docker run --name ecal-${NAME}-bash -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`../:/ecal -v `pwd`/../logs:/logs ecal-src-build:${VER} /bin/bash
+	${SSH} ${${NAME}_user}@${${NAME}}  docker run --name ecal-${NAME}-bash -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`../:/ecal -v `pwd`/../logs:/logs ecal-src-build:${VER} /bin/bash
 
 
 test-logs: sender-logs receiver-logs echo-logs
