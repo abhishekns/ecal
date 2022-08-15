@@ -1,17 +1,19 @@
 #!/bin/bash
 
+
+MIN_VER=`cat image-build-number.txt`
 VER=focal
 REGISTRY=rnd-builds.repos.natinst.com
 
-function buildAll() {
+function pullImages() {
     cd ~/ecal
     git pull
     #make images
     #make -B build
-    docker pull ${REGISTRY}/dtots/ecal-base:${VER}
-    docker tag ${REGISTRY}/dtots/ecal-base:${VER} ecal-base:${VER}
-    docker pull ${REGISTRY}/dtots/ecal-src-build:${VER}
-    docker tag ${REGISTRY}/dtots/ecal-src-build:${VER}  ecal-src-build:${VER}
+    docker pull ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
+    docker tag ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER} ecal-base:${VER}
+    docker pull ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
+    docker tag ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}  ecal-src-build:${VER}
 }
 
 if [ -d ~/ecal ]; then
@@ -22,4 +24,4 @@ else
     git submodule update --init
 fi
 
-buildAll
+pullImages
