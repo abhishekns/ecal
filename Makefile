@@ -47,10 +47,10 @@ server client:
 	mkdir -p logs
 	./setupRoute.sh
 	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/run-$@.sh
-
-server=ethlab-8881
+#ethlab-8881
+server=simfarm14
 client=simfarm15
-server_user=root
+server_user=abnsharm
 server_password=labview===
 client_user=abnsharm
 client_password=labview===
@@ -61,7 +61,7 @@ passwdless:
 	ssh-copy-id ${client_user}@${client}
 	ssh-copy-id ${server_user}@${server} < /tmp/.server.pwd
 
-test-deploy: images build push
+test-deploy: images
 	mkdir -p logs
 	scp deploy.sh ${client_user}@${client}:~/
 	scp deploy.sh ${server_user}@${server}:~/

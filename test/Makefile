@@ -16,16 +16,17 @@ latency-single:
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
 
-sender=ethlab-8881
+#ethlab-8881
+sender=simfarm14
 sender_user=abnsharm
 sender_password=labview===
 
-receiver=ethlab-8881
+receiver=
 receiver_user=abnsharm
 receiver_password=labview===
 
 echo=simfarm15
-echo_user=root
+echo_user=abnsharm
 echo_password=labview===
 
 # run echo first and then the receiver followed by sender on same or another machine

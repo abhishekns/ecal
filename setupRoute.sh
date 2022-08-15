@@ -9,6 +9,11 @@ if [ "x${hn}" == "xsimfarm15" ]; then
   NW_DEVICE=enp6s0
 fi
 
+if [ "x${hn}" == "xsimfarm14" ]; then
+  NW_DEVICE=enp0s25
+fi
+
+
 
 if [ -z ${NW_DEVICE+x} ]; then 
    echo "Define NW_DEVICE=<your nw device>   ex. NW_DEVICE=eno0 make server|client"
