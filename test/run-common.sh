@@ -6,8 +6,9 @@ PREFIX=/usr/local
 NAME=$1
 if [ -z "${NAME}" ]; then
    NAME=sender
+else
+   MODE="local"
 fi
-MODE="local"
 if [ "x${MODE}" == "xlocal" ]; then
         echo "nothing to do in local mode..."
 else
