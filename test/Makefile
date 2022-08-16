@@ -51,7 +51,7 @@ receiver sender echo:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/${NAME}.log
 	~/ecal/setupRoute.sh
-	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
+	docker run --name ecal-$@-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
 
 test-run: receiver-run echo-run sender-run
 
