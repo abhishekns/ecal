@@ -9,7 +9,7 @@ if [ -z "${NAME}" ]; then
 fi
 MODE="local"
 if [ "x${MODE}" == "xlocal" ]; then
-
+        echo "nothing to do in local mode..."
 else
         awk -F"=" '/^network_enabled/{$2="= true"}1' ${PREFIX}/etc/ecal/ecal.ini > ${PREFIX}/etc/ecal/ecal.tmp && \
                 rm ${PREFIX}/etc/ecal/ecal.ini && \
