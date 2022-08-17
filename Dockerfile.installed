@@ -1,0 +1,15 @@
+ARG OSVER
+
+FROM ubuntu:${OSVER}
+
+RUN apt update
+
+RUN mkdir -p /install
+COPY ./build/_deploy/eCAL-0.0.0-Linux.deb /install
+
+RUN apt install -y libprotobuf-c-dev curl libhdf5-dev libprotoc-dev
+RUN dpkg -i /install/eCAL-* && ldconfig
+
+RUN rm -rf /install
+
+CMD /bin/bash

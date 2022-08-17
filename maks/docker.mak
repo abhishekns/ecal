@@ -1,0 +1,9 @@
+BUILD_CMD = docker build -f Dockerfile.build
+INSTALL_CMD = docker build -f Dockerfile.installed
+COMMIT_CMD = docker commit
+REMOVE_CMD = docker rm
+RUN_CMD = docker run
+STOP_CMD = docker stop
+EXEC_CMD = docker exec
+PUSH_CMD = docker push
+TAG_CMD = docker tag

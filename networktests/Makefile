@@ -1,12 +1,5 @@
-VER=focal
-
-REGISTRY = rnd-builds.repos.natinst.com
-NETWORK = --ipc=host --pid=host --network=host
-#NETWORK =
-
-DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
-
-SSH = ssh -t
+include (maks/vars.mak)
+include (maks/roundtrip.mak)
 
 all:  latency-single test-run
 
@@ -18,19 +11,6 @@ latency-single:
 	docker run --name ecal-$@-common -d --rm -v `pwd`/../:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
 	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	docker stop ecal-$@-common
-
-#ethlab-8881
-sender=simfarm14
-sender_user=abnsharm
-sender_password=labview===
-
-receiver=simfarm14
-receiver_user=abnsharm
-receiver_password=labview===
-
-echo=simfarm15
-echo_user=abnsharm
-echo_password=labview===
 
 passwdless:
 	echo "${sender_password}" > /tmp/.sender.pwd

@@ -1,44 +1,38 @@
-VER=focal
+include maks/vars.mak
+include maks/client-server.mak
+include maks/docker.mak
 
-REGISTRY = rnd-builds.repos.natinst.com
-NETWORK = --ipc=host --pid=host --network=host
-#NETWORK =
-
-DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
-
-# Name of text file containing build number.
-IMAGE_BUILD_NUMBER = image-build-number.txt
-MIN_VER = $$(cat $(IMAGE_BUILD_NUMBER))
-
-all: images
-
+all: images build image-install
 
 images: ecal-base
 
 ecal-base:
-	docker build -t $@:${VER} .
+	${BUILD_CMD} -t $@:${VER} .
 
 build:
-	docker run --name ecal-$@ -i -v `pwd`:/ecal ecal-base:${VER} /ecal/build.sh
-	docker commit ecal-$@ ecal-src-$@:${VER}
-	docker rm ecal-$@
+	${RUN_CMD} --name ecal-$@ -i -v `pwd`:/ecal ecal-base:${VER} /ecal/build.sh
+	${COMMIT_CMD} ecal-$@ ecal-src-$@:${VER}
+	${REMOVE_CMD} ecal-$@
+
+image-install:
+	$(eval NAME := $(subst image-,,$@))
+	${INSTALL_CMD} --build-arg OSVER=${VER} -t ecal-${NAME}:${VER} .
 
 clean:
 	rm -rf build
 
 bash:
-	docker run --name ecal-$@ --rm -it -v `pwd`:/ecal ecal-src-build:${VER} /bin/bash
+	${RUN_CMD} --name ecal-$@ --rm -it -v `pwd`:/ecal ecal-src-build:${VER} /bin/bash
 
 latency-single:
-	docker run --name ecal-$@-common -d --rm -v `pwd`:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
-	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
-	docker stop ecal-$@-common
+	${RUN_CMD} --name ecal-$@-common -d --rm -v `pwd`:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
+	${EXEC_CMD} ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
+	${STOP_CMD} ecal-$@-common
 
 push: ${BUILD_NUMBER_FILE}
-	docker tag ecal-base:${VER} ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
-	docker tag ecal-src-build:${VER} ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
-	docker push ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
-	docker push ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
+	${TAG_CMD} ecal-install:${VER} ${REGISTRY}/dtots/ecal-install:${VER}.${MIN_VER}
+	${PUSH_CMD} ${REGISTRY}/dtots/ecal-install:${VER}.${MIN_VER}
+
 # Include build number rules.
 include buildnumber.mak
 
@@ -46,14 +40,7 @@ include buildnumber.mak
 server client:
 	mkdir -p logs
 	./setupRoute.sh
-	docker run --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-src-build:${VER} /ecal/run-$@.sh
-#ethlab-8881
-server=simfarm14
-client=simfarm15
-server_user=abnsharm
-server_password=labview===
-client_user=abnsharm
-client_password=labview===
+	${RUN_CMD} --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-install:${VER} /ecal/run-$@.sh
 
 passwdless:
 	echo "${client_password}" > /tmp/.client.pwd
@@ -67,32 +54,28 @@ deploy-client deploy-server:
 	mkdir -p logs
 	$(eval NAME := $(subst deploy-,$@))
 	scp ../deploy.sh ../image-build-number.txt ${${NAME}_user}@${${NAME}}:~/
-	ssh -n ${${NAME}_user}@${${NAME}} '~/deploy.sh ${NAME}' | tee logs/remote${NAME}.log &
+	${SSH} -n ${${NAME}_user}@${${NAME}} '~/deploy.sh ${NAME}' | tee logs/remote${NAME}.log &
 
 remote-clean:
-	ssh ${client_user}@${client} rm -rf ecal
-	ssh ${server_user}@${server} rm -rf ecal
+	${SSH} ${client_user}@${client} rm -rf ecal
+	${SSH} ${server_user}@${server} rm -rf ecal
 
 test-run:
 	mkdir -p logs
 	rm -f logs/client.log logs/server.log
-	ssh ${client_user}@${client} 'cd ~/ecal && make client '
+	${SSH} ${client_user}@${client} 'cd ~/ecal && make client '
 	sleep 5
-	ssh ${server_user}@${server} 'cd ~/ecal && make server'
+	${SSH} ${server_user}@${server} 'cd ~/ecal && make server'
 
 server-stop client-stop:
 	$(eval NAME := $(subst -stop,,$@))
-	ssh ${${NAME}_user}@${${NAME}} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
+	${SSH} ${${NAME}_user}@${${NAME}} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
 
 test-stop: client-stop server-stop
 
-server-logs:
+server-logs client-logs:
 	$(eval NAME := $(subst -logs,,$@))
-	ssh ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/publisher.log'
-
-client-logs:
-	$(eval NAME := $(subst -logs,,$@))
-	ssh ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/subscriber.log'
+	${SSH} ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/${NAME}.log'
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
