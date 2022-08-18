@@ -19,12 +19,13 @@ else
                 mv ${PREFIX}/etc/ecal/ecal.tmp ${PREFIX}/etc/ecal/ecal.ini
         rm -f /logs/${NAME}.log
 fi
-if [ "x${NAME}" == "xreceiver" ]
+if [ "x${NAME}" == "xreceiver" ]; then
     if [ =f receiver.dienow ]; then
        rm receiver.dienow
     fi
-    echo "executing receiver..."
+    echo -n "executing receiver..."
     ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
+    echo "done\nWaiting for send to finish ."
     while true;
     do
         sleep 60
