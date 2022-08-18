@@ -29,8 +29,8 @@ else
 endif
 
 passwdless:
-	echo "${sender_password}" > /tmp/.sender.pwd
-	ssh-copy-id ${sender_user}@${sender} < /tmp/.sender.pwd
+	echo "${target_password}" > /tmp/.target.pwd
+	ssh-copy-id ${target_user}@${target} < /tmp/.target.pwd
 
 bash:
 	${SSH} docker run --name ecal-$@ --rm -it -v `pwd`/../:/ecal ecal-install:${VER} /bin/bash

@@ -20,11 +20,24 @@ else
         rm -f /logs/${NAME}.log
 fi
 if [ "x${NAME}" == "xreceiver" ]
+    if [ =f receiver.dienow ]; then
+       rm receiver.dienow
+    fi
     echo "executing receiver..."
     ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
-        echo "executing receiver... done"
+    while true;
+    do
+        sleep 60
+        echo "."
+        if [ -f receiver.dienow ]; then
+            break
+        fi
+    done
+    rm receiver.dienow
+    echo "executing receiver... done"
 else
     echo "executing ${NAME}..."
     ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
     echo "executing ${NAME}...done"
+    touch receiver.dienow
 fi
