@@ -12,7 +12,7 @@ ecal-base:
 
 build:
 	${RUN_CMD} --name ecal-$@ -i -v `pwd`:/ecal ecal-base:${VER} /ecal/build.sh
-	${COMMIT_CMD} ecal-$@ ecal-src-$@:${VER}
+	${COMMIT_CMD} ecal-$@ ecal-install:${VER}
 	${REMOVE_CMD} ecal-$@
 
 image-install:

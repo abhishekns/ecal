@@ -79,7 +79,7 @@ void do_run(int delay_, std::string& log_file_)
       if ((cb_par.msg_num > 0) && (msg_last == cb_par.msg_num)) break;
       else msg_last = cb_par.msg_num;
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
   }
 
   // detach callback
