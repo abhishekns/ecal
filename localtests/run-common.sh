@@ -20,25 +20,28 @@ else
         rm -f /logs/${NAME}.log
 fi
 if [ "x${NAME}" == "xreceiver" ]; then
-    if [ =f receiver.dienow ]; then
-       rm receiver.dienow
+    if [ -f /tmp/receiver.dienow ]; then
+       rm /tmp/receiver.dienow
     fi
     echo -n "executing receiver..."
-    ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
+    ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log &
     echo "done\nWaiting for send to finish ."
     while true;
     do
         sleep 60
         echo "."
-        if [ -f receiver.dienow ]; then
+        if [ -f /tmp/receiver.dienow ]; then
             break
         fi
     done
-    rm receiver.dienow
+    rm /tmp/receiver.dienow
     echo "executing receiver... done"
 else
-    echo "executing ${NAME}..."
+    echo -n "executing ${NAME}..."
     ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
-    echo "executing ${NAME}...done"
-    touch receiver.dienow
+    echo "done"
+    if [ "x${NAME}" == "xsender"]; then
+        read -p "Press any key to stop sender..."
+        touch /tmp/receiver.dienow
+    fi
 fi
