@@ -40,7 +40,7 @@ else
     echo -n "executing ${NAME}..."
     ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
     echo "done"
-    if [ "x${NAME}" == "xsender"]; then
+    if [ "x${NAME}" == "xsender" ]; then
         read -p "Press any key to stop sender..."
         touch /tmp/receiver.dienow
     fi
