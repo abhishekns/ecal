@@ -39,12 +39,12 @@ bash:
 receiver:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/${NAME}.log
-	${RUN_CMD} --name ecal-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@
+	${RUN_CMD} --name ecal-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@ | tee ~/ecal/logs/$@-common.log
 
 sender echo:
 	mkdir -p ~/ecal/logs
-	rm -f ~/ecal/logs/$@.log
-	${EXEC_CMD} ecal-common /ecal/localtests/run-common.sh $@
+	rm -f ~/ecal/logs/$@.log ~/ecal/logs/$@-common.log
+	${EXEC_CMD} ecal-common /ecal/localtests/run-common.sh $@ | tee ~/ecal/logs/$@-common.log
 
 test-run: receiver-run echo-run sender-run
 
