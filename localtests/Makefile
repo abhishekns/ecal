@@ -57,18 +57,18 @@ test-stop: echo-stop receiver-stop sender-stop
 
 sender-stop receiver-stop echo-stop:
 	$(eval NAME := $(subst -stop,,$@))
-	${SSH} ${${NAME}_user}@${${NAME}} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
+	${SSH} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
 
 sender-bash receiver-bash echo-bash:
 	$(eval NAME := $(subst -bash,,$@))
-	${SSH} ${${NAME}_user}@${${NAME}} 'docker run --name ecal-${NAME}-bash -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`/ecal/:/ecal -v `pwd`/ecal/logs:/logs ecal-install:${VER} /bin/bash'
+	${SSH} 'docker run --name ecal-${NAME}-bash -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`/ecal/:/ecal -v `pwd`/ecal/logs:/logs ecal-install:${VER} /bin/bash'
 
 
 test-logs: sender-logs receiver-logs echo-logs
 
 sender-logs receiver-logs echo-logs:
 	$(eval NAME := $(subst -logs,,$@))
-	${SSH} ${${NAME}_user}@${${NAME}} 'tail -f ~/ecal/logs/$@.log'
+	${SSH} 'tail -f ~/ecal/logs/$@.log'
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
