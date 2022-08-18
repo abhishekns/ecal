@@ -37,14 +37,14 @@ passwdless:
 	ssh-copy-id ${sender_user}@${sender} < /tmp/.sender.pwd
 
 bash:
-	${SSH} docker run --name ecal-$@ --rm -it -v `pwd`/../:/ecal ecal-src-build:${VER} /bin/bash
+	${SSH} docker run --name ecal-$@ --rm -it -v `pwd`/../:/ecal ecal-install:${VER} /bin/bash
 
 # run echo first and then the receiver followed by sender on same or another machine
 receiver sender echo:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/${NAME}.log
 	~/ecal/setupRoute.sh
-	docker run --name ecal-$@-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
+	docker run --name ecal-$@-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@
 
 test-run: receiver-run echo-run sender-run
 
@@ -61,7 +61,7 @@ sender-stop receiver-stop echo-stop:
 
 sender-bash receiver-bash echo-bash:
 	$(eval NAME := $(subst -bash,,$@))
-	${SSH} ${${NAME}_user}@${${NAME}} 'docker run --name ecal-${NAME}-bash -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`/ecal/:/ecal -v `pwd`/ecal/logs:/logs ecal-src-build:${VER} /bin/bash'
+	${SSH} ${${NAME}_user}@${${NAME}} 'docker run --name ecal-${NAME}-bash -it ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`/ecal/:/ecal -v `pwd`/ecal/logs:/logs ecal-install:${VER} /bin/bash'
 
 
 test-logs: sender-logs receiver-logs echo-logs
