@@ -8,15 +8,16 @@ bash:
 
 latency-single:
 	cd ..
-	docker run --name ecal-$@-common -d --rm -v `pwd`/../:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
-	docker exec ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
-	docker stop ecal-$@-common
+	${RUN_CMD} --name ecal-$@-common -d --rm -v `pwd`/../:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
+	${EXEC_CMD} ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
+	${STOP_CMD} ecal-$@-common
 
-passwdless:
-	echo "${sender_password}" > /tmp/.sender.pwd
-	echo "${echo_password}" > /tmp/.echo.pwd
-	ssh-copy-id ${sender_user}@${sender} < /tmp/.sender.pwd
-	ssh-copy-id ${echo_user}@${echo} < /tmp/.echo.pwd
+passwdless: sender-pl receiver-pl echo-pl
+
+sender-pl receiver-pl echo-pl:
+	$(eval NAME := $(subst -pl,,$@))
+	echo "${${NAME}_password}" > /tmp/.${NAME}.pwd
+	ssh-copy-id ${${NAME}_user}@${${NAME}} < /tmp/.${NAME}.pwd
 
 test-deploy: deploy-sender deploy-receiver deploy-echo
 
@@ -28,10 +29,11 @@ deploy-sender deploy-receiver deploy-echo:
 
 # run echo first and then the receiver followed by sender on same or another machine
 receiver sender echo:
+	echo "${$@_password}" > /tmp/.$@.pwd
 	mkdir -p ~/ecal/logs
-	rm -f ~/ecal/logs/${NAME}.log
-	~/ecal/setupRoute.sh
-	docker run --name ecal-$@-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-src-build:${VER} /ecal/test/run-common.sh $@
+	rm -f ~/ecal/logs/$@.log
+	~/ecal/setupRoute.sh < /tmp/.$@.pwd
+	${RUN_CMD} --name ecal-$@-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/network/run-common.sh $@
 
 test-run: receiver-run echo-run sender-run
 

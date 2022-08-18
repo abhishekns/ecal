@@ -1,10 +1,8 @@
-VER = focal
+include ../maks/vars.mak
+include ../maks/docker.mak
+include ../maks/roundtrip.mak
+include ../maks/buildnumber.mak
 
-REGISTRY = rnd-builds.repos.natinst.com
-NETWORK = --ipc=host --pid=host --network=host
-#NETWORK =
-
-DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
 
 # localhost or any other machine where all of the below tests will run
 target=simfarm14
@@ -23,8 +21,6 @@ receiver_password=${target_password}
 echo=${target}
 echo_user=${target_user}
 echo_password=${target_password}
-
-HOSTNAME := $(shell hostname)
 
 ifeq ("${target}", "${HOSTNAME}")
     SSH = ''

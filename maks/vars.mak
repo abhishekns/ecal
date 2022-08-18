@@ -11,3 +11,5 @@ IMAGE_BUILD_NUMBER = image-build-number.txt
 MIN_VER = $$(cat $(IMAGE_BUILD_NUMBER))
 
 SSH = ssh -t
+
+HOSTNAME := $(shell hostname)
