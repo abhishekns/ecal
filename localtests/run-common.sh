@@ -20,7 +20,11 @@ else
         rm -f /logs/${NAME}.log
 fi
 if [ "x${NAME}" == "xreceiver" ]
+    echo "executing receiver..."
     ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
+        echo "executing receiver... done"
 else
+    echo "executing ${NAME}..."
     ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
+    echo "executing ${NAME}...done"
 fi
