@@ -1,6 +1,7 @@
 include maks/vars.mak
 include maks/client-server.mak
 include maks/docker.mak
+include maks/roundtrip.mak
 
 all: images build image-install
 
@@ -21,11 +22,8 @@ image-install:
 clean:
 	rm -rf build
 
-bash:
-	${RUN_CMD} --name ecal-$@ --rm -it -v `pwd`:/ecal ecal-src-build:${VER} /bin/bash
-
 latency-single:
-	${RUN_CMD} --name ecal-$@-common -d --rm -v `pwd`:/ecal ecal-src-build:${VER} /ecal/build/bin/ecal_sample_latency_server
+	${RUN_CMD} --name ecal-$@-common -d --rm -v `pwd`:/ecal ecal-install:${VER} /ecal/build/bin/ecal_sample_latency_server
 	${EXEC_CMD} ecal-$@-common /ecal/build/bin/ecal_sample_latency_client
 	${STOP_CMD} ecal-$@-common
 
@@ -41,6 +39,9 @@ server client:
 	mkdir -p logs
 	./setupRoute.sh
 	${RUN_CMD} --name ecal-$@-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v `pwd`:/ecal -v `pwd`/logs:/logs ecal-install:${VER} /ecal/run-$@.sh
+
+bash:
+	${RUN_CMD} --name ecal-$@ --rm -it -v `pwd`:/ecal ecal-install:${VER} /bin/bash
 
 passwdless:
 	echo "${client_password}" > /tmp/.client.pwd

@@ -1,12 +1,10 @@
-VER=focal
+VER = focal
 
 REGISTRY = rnd-builds.repos.natinst.com
 NETWORK = --ipc=host --pid=host --network=host
 #NETWORK =
 
 DEBUG_PARAMS = --cap-add=SYS_PTRACE --security-opt seccomp=unconfined
-
-SSH = ssh -t ${SSH} ${target_user}@${target}
 
 # localhost or any other machine where all of the below tests will run
 target=simfarm14
@@ -26,15 +24,20 @@ echo=${target}
 echo_user=${target_user}
 echo_password=${target_password}
 
-@if [ ${target} == "localhost" ]; then
-    SSH =
+HOSTNAME := $(shell hostname)
+
+ifeq ("${target}", "${HOSTNAME}")
+    SSH = ''
+else
+    SSH = ssh -t ${target_user}@${target}
+endif
 
 passwdless:
 	echo "${sender_password}" > /tmp/.sender.pwd
 	ssh-copy-id ${sender_user}@${sender} < /tmp/.sender.pwd
 
 bash:
-	docker run --name ecal-$@ --rm -it -v `pwd`/../:/ecal ecal-src-build:${VER} /bin/bash
+	${SSH} docker run --name ecal-$@ --rm -it -v `pwd`/../:/ecal ecal-src-build:${VER} /bin/bash
 
 # run echo first and then the receiver followed by sender on same or another machine
 receiver sender echo:
@@ -47,7 +50,7 @@ test-run: receiver-run echo-run sender-run
 
 receiver-run sender-run echo-run:
 	$(eval NAME := $(subst -run,,$@))
-	cd ~/ecal/test && make ${NAME} '
+	${SSH} 'cd ~/ecal/localtests && make ${NAME}'
 	sleep 3
 
 test-stop: echo-stop receiver-stop sender-stop
