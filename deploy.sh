@@ -13,7 +13,9 @@ function pullImages() {
     docker pull ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER}
     docker tag ${REGISTRY}/dtots/ecal-base:${VER}.${MIN_VER} ecal-base:${VER}
     docker pull ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}
-    docker tag ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}  ecal-src-build:${VER}
+    docker tag ${REGISTRY}/dtots/ecal-src-build:${VER}.${MIN_VER}  ecal-install:${VER}
+    docker pull ${REGISTRY}/dtots/ecal-install:${VER}.${MIN_VER}
+    docker tag ${REGISTRY}/dtots/ecal-install:${VER}.${MIN_VER}  ecal-install:${VER}
 }
 
 if [ -d ~/ecal ]; then

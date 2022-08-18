@@ -34,7 +34,7 @@ push: ${BUILD_NUMBER_FILE}
 	${PUSH_CMD} ${REGISTRY}/dtots/ecal-install:${VER}.${MIN_VER}
 
 # Include build number rules.
-include buildnumber.mak
+include maks/buildnumber.mak
 
 # run client first and then the server on same or another machine
 server client:
@@ -52,8 +52,8 @@ deploy-test: deploy-client deploy-server
 
 deploy-client deploy-server:
 	mkdir -p logs
-	$(eval NAME := $(subst deploy-,$@))
-	scp ../deploy.sh ../image-build-number.txt ${${NAME}_user}@${${NAME}}:~/
+	$(eval NAME := $(subst deploy-,,$@))
+	scp ./deploy.sh ./image-build-number.txt ${${NAME}_user}@${${NAME}}:~/
 	${SSH} -n ${${NAME}_user}@${${NAME}} '~/deploy.sh ${NAME}' | tee logs/remote${NAME}.log &
 
 remote-clean:
