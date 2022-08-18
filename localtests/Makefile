@@ -39,7 +39,6 @@ bash:
 receiver:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/${NAME}.log
-	~/ecal/setupRoute.sh
 	${RUN_CMD} --name ecal-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@
 
 sender echo:
@@ -58,7 +57,7 @@ test-stop: echo-stop receiver-stop sender-stop
 
 sender-stop receiver-stop echo-stop:
 	$(eval NAME := $(subst -stop,,$@))
-	${SSH} 'docker stop ecal-${NAME}-common 2>&1 > /dev/null'
+	${SSH} 'docker stop ecal-common 2>&1 > /dev/null'
 
 sender-bash receiver-bash echo-bash:
 	$(eval NAME := $(subst -bash,,$@))
@@ -69,7 +68,7 @@ test-logs: sender-logs receiver-logs echo-logs
 
 sender-logs receiver-logs echo-logs:
 	$(eval NAME := $(subst -logs,,$@))
-	${SSH} 'tail -f ~/ecal/logs/$@.log'
+	${SSH} 'tail -f ~/ecal/logs/${NAME}.log'
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
