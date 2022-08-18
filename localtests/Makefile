@@ -39,7 +39,7 @@ bash:
 receiver:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/${NAME}.log
-	${RUN_CMD} --name ecal-common -d ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@ | tee ~/ecal/logs/$@-common.log
+	${RUN_CMD} --name ecal-common -i ${NETWORK} ${DEBUG_PARAMS} --rm -v ~/ecal/:/ecal -v ~/ecal/logs:/logs ecal-install:${VER} /ecal/localtests/run-common.sh $@ | tee ~/ecal/logs/$@-common.log
 
 sender echo:
 	mkdir -p ~/ecal/logs

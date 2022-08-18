@@ -25,7 +25,7 @@ if [ "x${NAME}" == "xreceiver" ]; then
     fi
     echo -n "executing receiver..."
     ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log &
-    echo "done\nWaiting for send to finish ."
+    echo "done" && echo "Waiting for send to finish ."
     while true;
     do
         sleep 60
