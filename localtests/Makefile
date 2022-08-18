@@ -45,7 +45,7 @@ receiver:
 sender echo:
 	mkdir -p ~/ecal/logs
 	rm -f ~/ecal/logs/$@.log
-	${EXEC_CMD} ecal-common /ecal/localtests/run-common.sh $@ &
+	${EXEC_CMD} ecal-common /ecal/localtests/run-common.sh $@
 
 test-run: receiver-run echo-run sender-run
 

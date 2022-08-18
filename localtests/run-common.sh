@@ -19,5 +19,8 @@ else
                 mv ${PREFIX}/etc/ecal/ecal.tmp ${PREFIX}/etc/ecal/ecal.ini
         rm -f /logs/${NAME}.log
 fi
-
-${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
+if [ "x${NAME}" == "xreceiver" ]
+    ${PREFIX}/bin/ecal_sample_${NAME} | tee /logs/${NAME}.log
+else
+    ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
+fi
