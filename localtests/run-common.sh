@@ -41,6 +41,7 @@ else
     ${PREFIX}/bin/ecal_sample_${NAME} > /logs/${NAME}.log &
     echo "done"
     if [ "x${NAME}" == "xsender" ]; then
+        echo "Waiting for sender to finish.."
         read -p "Press any key to stop sender..."
         touch /tmp/receiver.dienow
     fi
