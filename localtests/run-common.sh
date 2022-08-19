@@ -32,7 +32,7 @@ if [ "x${NAME}" == "xreceiver" ]; then
         echo "."
         if [ -f /tmp/receiver.dienow ]; then
             echo "received dienow"
-            break
+            #break
         fi
     done
     rm /tmp/receiver.dienow

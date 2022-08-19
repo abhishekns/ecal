@@ -76,7 +76,10 @@ void do_run(int delay_, std::string& log_file_)
     // if not, we stop and evaluate this run
     {
       std::lock_guard<std::mutex> lock(cb_par.mtx);
-      if ((cb_par.msg_num > 0) && (msg_last == cb_par.msg_num)) break;
+      if ((cb_par.msg_num > 0) && (msg_last == cb_par.msg_num)) {
+        std::cout << "Messages Received: " << cb_par.msg_num << std::endl;
+        break;
+      }
       else msg_last = cb_par.msg_num;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
@@ -101,7 +104,7 @@ int main(int argc, char** argv)
   {
     // parse command line
     TCLAP::CmdLine cmd("latency_rec");
-    TCLAP::ValueArg<int>         delay(   "d", "delay",    "Callback process delay in ms.",     false,  0, "int");
+    TCLAP::ValueArg<int>         delay(   "d", "delay",    "Callback process delay in ms.",     false,  5, "int");
     TCLAP::ValueArg<std::string> log_file("l", "log_file", "Base file name to export results.", false, "", "string");
     cmd.add(delay);
     cmd.add(log_file);

@@ -94,7 +94,7 @@ int main(int argc, char **argv)
     TCLAP::CmdLine cmd("latency_snd");
     TCLAP::ValueArg<int>         runs      ("r", "runs",       "Number of messages to send.",            false, 1000, "int");
     TCLAP::ValueArg<int>         size      ("s", "size",       "Messages size in kB.",                   false,   -1, "int");
-    TCLAP::ValueArg<int>         delay     ("d", "delay",      "Messages send delay in ms.",             false,    1, "int");
+    TCLAP::ValueArg<int>         delay     ("d", "delay",      "Messages send delay in ms.",             false,    5, "int");
     TCLAP::ValueArg<int>         mem_buffer("b", "mem_buffer", "Number of memory files per connection.", false,    1, "int");
     TCLAP::SwitchArg             zero_copy ("z", "zero_copy",  "Switch zero copy mode on.");
     cmd.add(runs);
